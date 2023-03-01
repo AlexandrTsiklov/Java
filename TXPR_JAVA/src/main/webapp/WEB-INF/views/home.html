@@ -1,0 +1,146 @@
+<!doctype html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+    <head>
+      <meta charset="utf-8">
+      <link rel="stylesheet" type="text/css" href="/CSS/home.css"/>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+      <title>Главная</title>
+    </head>
+    <body style="background: linear-gradient(0deg, rgb(0, 0, 0), rgb(0, 17, 114)) no-repeat; height: 110vh">
+        <section class="main">
+        <nav style="margin-top: 1rem; margin-left: 2%; height: 6rem;">
+          <div id="logo_and_button" style="height: 5rem; line-height: 5rem; margin-top: 1.5rem">
+            <img src="../Images/logos/eagle_logo.png" alt="Eagle" style="width: 5.6rem; height: 5rem; margin-bottom: 2rem;">
+            <a href="home" aria-current="page" type="button" class="btn btn-primary btn-lg" style="color: #dbdbdb; height: 2.3rem; line-height: 1rem; background: black" id="button_main">Главная</a>
+            <a href="make-order" type="button" id="new_offer_button" class="btn btn-primary btn-lg" style="color:#dbdbdb; height: 2.3rem; line-height: 1rem; background: black">+ новая заявка</a>
+            <div style="display: inline-block; width: 40%; text-align: center">
+              <span id="byAlexTing">Made by Alex Ting</span>
+            </div>
+          </div>
+          <div id="username_and_settings">
+
+            <div th:text="${user.getUsername()}" style="font-size: 1.4rem; margin-bottom: 0.2rem; color: #dbdbdb; display: inline-block;">Username</div>
+            <div th:text="${user.getRating()}" style="color:limegreen; display: inline-block; font-size: 1.4rem;">5.0</div>
+
+            <div class="profile" style="position:relative">
+              <div class="dropdown" style="width: 8rem; position: absolute; right:0">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="settings_button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background: black; color:#dbdbdb; border: 0.001rem solid blue">
+                  Настройки
+                </button>
+                <div class="dropdown-menu" id="settings_menue" aria-labelledby="settings_button">
+                  <button class="dropdown-item" type="button" onclick="show_history('from_home')">История</button>
+                  <form class="dropdown-item" th:method="post" th:action="@{/txpr/logout}">
+                    <input type="submit" style="background: none; border: none;" value="Выйти">
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="photoDiv">
+            <img  src="../Images/avatars/empty_ava.jpg" alt="Empty ava" id="ava" onclick="chenge_ava()">
+          </div>
+              <div id="newAvaChoose">
+                <form method="post" id="avaForm" action="save_avatar" enctype="multipart/form-data">
+                  <label for="id_photo" id="labelPhoto">Выберите файл</label>
+                  <input type="file" name="photo" accept="image/*" required="" id="id_photo"><br>
+                  <input type="submit" id="photoSave" value="Сохранить">
+                </form>
+              </div>
+        </nav>
+        <section class="main_window">
+            <div class="offers_info">
+              <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link active tab_prop myLink" id="making" data-toggle="tab" href="#nav-home" style="border-radius: 1.2rem 1.2rem 0 0 !important;" onclick="making_order()">Выполняю</a>
+                <a class="nav-item nav-link tab_prop myLink" id="waiting" data-toggle="tab" href="#nav-profile" style="border-radius: 1.2rem 1.2rem 0 0 !important;" onclick="wait_to_get()">Жду получения</a>
+                <a class="nav-item nav-link tab_prop myLink" id="without_responce" data-toggle="tab" href="#nav-contact" style="border-radius: 1.2rem 1.2rem 0 0 !important; position:relative !important;" onclick="getPublished()">Опубликованное</a>
+                <a class="nav-item nav-link tab_prop myLink" id="myOtkliki" data-toggle="tab" href="#nav-something" style="border-radius: 1.2rem 1.2rem 0 0 !important;" onclick="get_all_my_otkliks()">Мои отклики</a>
+              </div>
+              <div class="tab-content" id="nav-tabContent" style="position: relative;">
+                <div class="tab-pane fade show active" id="nav-home" aria-labelledby="making">
+                  <table class="table table-dark table-hover" id="ordersIMakingTable">
+                    <thead>
+                      <tr>
+                        <th scope="col">Заказчик</th>
+                        <th scope="col">Откуда</th>
+                        <th scope="col">Куда</th>
+                        <th scope="col">Время</th>
+                        <th scope="col">Товар</th>
+                        <th scope="col">Цена</th>
+                      </tr>
+                    </thead>
+                    <tbody id="ordersIMakingTbody">
+                      <tr>
+                        <td colspan="6">Пока ничего не выполняю</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="tab-pane fade" id="nav-profile" aria-labelledby="waiting">
+                  <table class="table table-dark table-hover" id="waitToGetTable">
+                    <thead>
+                      <tr>
+                        <th scope="col">Доставщик</th>
+                        <th scope="col">Откуда</th>
+                        <th scope="col">Куда</th>
+                        <th scope="col">Время</th>
+                        <th scope="col">Товар</th>
+                        <th scope="col">Цена</th>
+                      </tr>
+                    </thead>
+                    <tbody id="waitToGetTbody">
+                      <tr>
+                        <td colspan="6">Пока ничего не заказал</td>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="tab-pane fade" id="nav-contact" aria-labelledby="without_responce">
+                  <table class="table table-dark table-hover" id="publishedTable">
+                    <thead>
+                      <tr>
+                        <th scope="col">Тип</th>
+                        <th scope="col">Откуда</th>
+                        <th scope="col">Куда</th>
+                        <th scope="col">Время</th>
+                        <th scope="col">Товар</th>
+                        <th scope="col">Цена</th>
+                      </tr>
+                    </thead>
+                    <tbody id="published_table">
+                      <tr>
+                        <td colspan="6">Заказов пока нет</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="tab-pane fade" id="nav-something" aria-labelledby="MyOtkliki">
+                  <table class="table table-dark table-hover" id="myOtklikiTable">
+                     <thead>
+                      <tr>
+                        <th scope="col">Тип</th>
+                        <th scope="col">Юзер</th>
+                        <th scope="col">Откуда</th>
+                        <th scope="col">Куда</th>
+                        <th scope="col">Время</th>
+                        <th scope="col">Товар</th>
+                        <th scope="col">Цена</th>
+                      </tr>
+                    </thead>
+                    <tbody id="myOtklikiTbody">
+                      <tr>
+                        <td colspan="7">Откликов пока нет</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+        </section>
+      </section>
+    </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript" src="/JavaScript/home_new.js"></script>
+</html>
+
